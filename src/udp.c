@@ -120,6 +120,9 @@ int udp_open(lua_State *L)
     auxiliar_add2group(L, "udp{connected}",   "select{able}");
     auxiliar_add2group(L, "udp{unconnected}", "select{able}");
     /* define library functions */
+    lua_pushstring(L, "_UDPDATAGRAMSIZE");    // max send/receive size
+    lua_pushnumber(L, UDP_DATAGRAMSIZE);
+    lua_rawset(L, -3);
 #if LUA_VERSION_NUM > 501 && !defined(LUA_COMPAT_MODULE)
     luaL_setfuncs(L, func, 0);
 #else

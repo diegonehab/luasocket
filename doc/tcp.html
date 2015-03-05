@@ -612,7 +612,8 @@ Returns the underling socket descriptor or handle associated to the object.
 </p>
 
 <p class=return>
-The descriptor or handle. In case the object has been closed, the return will be -1.
+The descriptor or handle. In case the object has been closed, the return will be -1. The 
+constant <tt>socket._SOCKETINVALID</tt> is the OS value for invalid sockets.
 </p>
 
 <p class=note>
@@ -628,7 +629,7 @@ server:<b>setfd(</b>fd<b>)</b>
 </p>
 
 <p class=description>
-Sets the underling socket descriptor or handle associated to the object. The current one is simply replaced, not closed, and no other change to the object state is made.
+Sets the underling socket descriptor or handle associated to the object. The current one is simply replaced, not closed, and no other change to the object state is made.  The constant <tt>socket._SOCKETINVALID</tt> is the OS value for invalid sockets.
 </p>
 
 <p class=return>

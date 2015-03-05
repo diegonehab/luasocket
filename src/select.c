@@ -40,6 +40,9 @@ int select_open(lua_State *L) {
     lua_pushstring(L, "_SETSIZE");
     lua_pushnumber(L, FD_SETSIZE);
     lua_rawset(L, -3);
+    lua_pushstring(L, "_SOCKETINVALID");  // for use with getfd() and setfd()
+    lua_pushnumber(L, SOCKET_INVALID);
+    lua_rawset(L, -3);
 #if LUA_VERSION_NUM > 501 && !defined(LUA_COMPAT_MODULE)
     luaL_setfuncs(L, func, 0);
 #else
