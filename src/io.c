@@ -10,7 +10,7 @@
 /*-------------------------------------------------------------------------*\
 * Initializes C structure
 \*-------------------------------------------------------------------------*/
-void io_init(p_io io, p_send send, p_recv recv, p_error error, void *ctx) {
+LUASOCKET_API void io_init(p_io io, p_send send, p_recv recv, p_error error, void *ctx) {
     io->send = send;
     io->recv = recv;
     io->error = error;

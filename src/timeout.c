@@ -46,7 +46,7 @@ static luaL_Reg func[] = {
 /*-------------------------------------------------------------------------*\
 * Initialize structure
 \*-------------------------------------------------------------------------*/
-void timeout_init(p_timeout tm, double block, double total) {
+LUASOCKET_API void timeout_init(p_timeout tm, double block, double total) {
     tm->block = block;
     tm->total = total;
 }
@@ -112,7 +112,7 @@ double timeout_getretry(p_timeout tm) {
 * Input
 *   tm: timeout control structure
 \*-------------------------------------------------------------------------*/
-p_timeout timeout_markstart(p_timeout tm) {
+LUASOCKET_API p_timeout timeout_markstart(p_timeout tm) {
     tm->start = timeout_gettime();
     return tm;
 }
@@ -155,7 +155,7 @@ int timeout_open(lua_State *L) {
 *   time: time out value in seconds
 *   mode: "b" for block timeout, "t" for total timeout. (default: b)
 \*-------------------------------------------------------------------------*/
-int timeout_meth_settimeout(lua_State *L, p_timeout tm) {
+LUASOCKET_API int timeout_meth_settimeout(lua_State *L, p_timeout tm) {
     double t = luaL_optnumber(L, 2, -1);
     const char *mode = luaL_optstring(L, 3, "b");
     switch (*mode) {

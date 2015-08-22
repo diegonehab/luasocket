@@ -21,7 +21,7 @@
 #define WAITFD_R        POLLIN
 #define WAITFD_W        POLLOUT
 #define WAITFD_C        (POLLIN|POLLOUT)
-int socket_waitfd(p_socket ps, int sw, p_timeout tm) {
+LUASOCKET_API int socket_waitfd(p_socket ps, int sw, p_timeout tm) {
     int ret;
     struct pollfd pfd;
     pfd.fd = *ps;
@@ -75,7 +75,7 @@ int socket_waitfd(p_socket ps, int sw, p_timeout tm) {
 /*-------------------------------------------------------------------------*\
 * Initializes module
 \*-------------------------------------------------------------------------*/
-int socket_open(void) {
+LUASOCKET_API int socket_open(void) {
     /* instals a handler to ignore sigpipe or it will crash us */
     signal(SIGPIPE, SIG_IGN);
     return 1;
@@ -91,7 +91,7 @@ int socket_close(void) {
 /*-------------------------------------------------------------------------*\
 * Close and inutilize socket
 \*-------------------------------------------------------------------------*/
-void socket_destroy(p_socket ps) {
+LUASOCKET_API void socket_destroy(p_socket ps) {
     if (*ps != SOCKET_INVALID) {
         close(*ps);
         *ps = SOCKET_INVALID;
@@ -354,7 +354,7 @@ int socket_read(p_socket ps, char *data, size_t count, size_t *got, p_timeout tm
 /*-------------------------------------------------------------------------*\
 * Put socket into blocking mode
 \*-------------------------------------------------------------------------*/
-void socket_setblocking(p_socket ps) {
+LUASOCKET_API void socket_setblocking(p_socket ps) {
     int flags = fcntl(*ps, F_GETFL, 0);
     flags &= (~(O_NONBLOCK));
     fcntl(*ps, F_SETFL, flags);
@@ -363,7 +363,7 @@ void socket_setblocking(p_socket ps) {
 /*-------------------------------------------------------------------------*\
 * Put socket into non-blocking mode
 \*-------------------------------------------------------------------------*/
-void socket_setnonblocking(p_socket ps) {
+LUASOCKET_API void socket_setnonblocking(p_socket ps) {
     int flags = fcntl(*ps, F_GETFL, 0);
     flags |= O_NONBLOCK;
     fcntl(*ps, F_SETFL, flags);
@@ -400,7 +400,7 @@ const char *socket_hoststrerror(int err) {
     }
 }
 
-const char *socket_strerror(int err) {
+LUASOCKET_API const char *socket_strerror(int err) {
     if (err <= 0) return io_strerror(err);
     switch (err) {
         case EADDRINUSE: return PIE_ADDRINUSE;
