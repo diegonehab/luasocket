@@ -30,4 +30,9 @@ typedef t_socket *p_socket;
 #define AI_NUMERICSERV (0)
 #endif
 
+#define WAITFD_R        1
+#define WAITFD_W        2
+#define WAITFD_E        4
+#define WAITFD_C        (WAITFD_E|WAITFD_W)
+
 #endif /* WSOCKET_H */

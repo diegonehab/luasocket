@@ -15,6 +15,8 @@
 #include <stdio.h>
 #include "lua.h"
 
+#include "common.h"
+
 #include "timeout.h"
 
 /* IO error codes */
@@ -58,8 +60,9 @@ typedef struct t_io_ {
 } t_io;
 typedef t_io *p_io;
 
-void io_init(p_io io, p_send send, p_recv recv, p_error error, void *ctx);
-const char *io_strerror(int err);
+LUASOCKET_API void io_init(p_io io, p_send send, p_recv recv,
+        p_error error, void *ctx);
+LUASOCKET_API const char *io_strerror(int err);
 
 #endif /* IO_H */
 
