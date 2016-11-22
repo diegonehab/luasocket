@@ -37,6 +37,7 @@ int opt_set_ip6_multicast_loop(lua_State *L, p_socket ps);
 int opt_set_ip6_add_membership(lua_State *L, p_socket ps);
 int opt_set_ip6_drop_membersip(lua_State *L, p_socket ps);
 int opt_set_ip6_v6only(lua_State *L, p_socket ps);
+int opt_set_passcred(lua_State *L, p_socket ps);
 
 /* supported options for getoption */
 int opt_get_dontroute(lua_State *L, p_socket ps);
@@ -54,6 +55,8 @@ int opt_get_ip6_multicast_hops(lua_State *L, p_socket ps);
 int opt_get_ip6_unicast_hops(lua_State *L, p_socket ps);
 int opt_get_ip6_v6only(lua_State *L, p_socket ps);
 int opt_get_reuseport(lua_State *L, p_socket ps);
+int opt_get_passcred(lua_State *L, p_socket ps);
+int opt_get_peercred(lua_State *L, p_socket ps);
 
 /* invokes the appropriate option handler */
 int opt_meth_setoption(lua_State *L, p_opt opt, p_socket ps);

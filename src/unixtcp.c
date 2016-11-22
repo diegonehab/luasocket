@@ -27,6 +27,7 @@ static int meth_receive(lua_State *L);
 static int meth_accept(lua_State *L);
 static int meth_close(lua_State *L);
 static int meth_setoption(lua_State *L);
+static int meth_getoption(lua_State *L);
 static int meth_settimeout(lua_State *L);
 static int meth_getfd(lua_State *L);
 static int meth_setfd(lua_State *L);
@@ -55,6 +56,7 @@ static luaL_Reg unixtcp_methods[] = {
     {"send",        meth_send},
     {"setfd",       meth_setfd},
     {"setoption",   meth_setoption},
+    {"getoption",   meth_getoption},
     {"setpeername", meth_connect},
     {"setsockname", meth_bind},
     {"getsockname", meth_getsockname},
@@ -68,6 +70,13 @@ static t_opt optset[] = {
     {"keepalive",   opt_set_keepalive},
     {"reuseaddr",   opt_set_reuseaddr},
     {"linger",      opt_set_linger},
+    {"passcred",    opt_set_passcred},
+    {NULL,          NULL}
+};
+
+static t_opt optget[] = {
+    {"passcred",    opt_get_passcred},
+    {"peercred",    opt_get_peercred},
     {NULL,          NULL}
 };
 
@@ -128,6 +137,14 @@ static int meth_setstats(lua_State *L) {
 static int meth_setoption(lua_State *L) {
     p_unix un = (p_unix) auxiliar_checkgroup(L, "unixtcp{any}", 1);
     return opt_meth_setoption(L, optset, &un->sock);
+}
+
+/*-------------------------------------------------------------------------*\
+* Just call option handler
+\*-------------------------------------------------------------------------*/
+static int meth_getoption(lua_State *L) {
+    p_unix un = (p_unix) auxiliar_checkgroup(L, "unixudp{any}", 1);
+    return opt_meth_getoption(L, optget, &un->sock);
 }
 
 /*-------------------------------------------------------------------------*\
