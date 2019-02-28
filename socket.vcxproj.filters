@@ -13,6 +13,7 @@
     <ClCompile Include="src\timeout.c" />
     <ClCompile Include="src\udp.c" />
     <ClCompile Include="src\wsocket.c" />
+    <ClCompile Include="src\compat.c" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="src\ltn12.lua">
