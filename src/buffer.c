@@ -114,10 +114,18 @@ int buffer_meth_receive(lua_State *L, p_buffer buf) {
     luaL_addlstring(&b, part, size);
     /* receive new patterns */
     if (!lua_isnumber(L, 2)) {
-        const char *p= luaL_optstring(L, 2, "*l");
-        if (p[0] == '*' && p[1] == 'l') err = recvline(buf, &b);
-        else if (p[0] == '*' && p[1] == 'a') err = recvall(buf, &b);
-        else luaL_argcheck(L, 0, 2, "invalid receive pattern");
+        const char *p = luaL_optstring(L, 2, "l");
+        if (*p == '*') p++;  /* skip optional '*' (for compatibility) */
+        switch (*p) {
+            case 'l':  /* line */
+                err = recvline(buf, &b);
+                break;
+            case 'a':  /* all */
+                err = recvall(buf, &b);
+                break;
+            default:
+                luaL_argcheck(L, 0, 2, "invalid receive pattern");
+        }
     /* get a fixed number of bytes (minus what was already partially
      * received) */
     } else {
