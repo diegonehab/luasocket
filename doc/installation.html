@@ -79,6 +79,21 @@ distribution directory structure:</p>
 would be replaced by <tt>core.so</tt>.  
 </p>
 
+<p>
+Alternatively, you can build and install LuaSocket using vcpkg dependency manager:
+
+<pre class=example>
+git clone https://github.com/Microsoft/vcpkg.git
+cd vcpkg
+./bootstrap-vcpkg.sh
+./vcpkg integrate install
+./vcpkg install luasocket
+</pre>
+
+The luasocket port in vcpkg is kept up to date by microsoft team members and community contributors.
+If the version is out of date, please create an issue or pull request on the vcpkg repository.
+
+</p>
 <h3>Using LuaSocket</h3>
 
 <p> With the above setup, and an interpreter with shared library support,
