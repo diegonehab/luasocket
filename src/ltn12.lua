@@ -297,14 +297,17 @@ end
 -----------------------------------------------------------------------------
 -- pumps one chunk from the source to the sink
 function pump.step(src, snk)
+    if ... then snk = ltn12.sink.chain(snk, ...) end
     local chunk, src_err = src()
     local ret, snk_err = snk(chunk, src_err)
     if chunk and ret then return 1
     else return nil, src_err or snk_err end
 end
 
--- pumps all data from a source to a sink, using a step function
-function pump.all(src, snk, step)
+-- pumps all data from a source to a sink, optionally going through
+-- intermediate filters
+function pump.all(src, snk, ...)
+    if ... then snk = ltn12.sink.chain(snk, ...) end
     base.assert(src and snk)
     step = step or pump.step
     while true do

@@ -138,11 +138,16 @@ end
 <!-- all ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
 <p class=name id="pump.all">
-ltn12.pump.<b>all(</b>source, sink<b>)</b>
+  ltn12.pump.<b>all(</b>source, 
+  [filter<sub>1</sub>, filter<sub>2</sub>, ... filter<sub>N</sub>,]
+  sink<b>)</b>
 </p>
 
 <p class=description>
-Pumps <em>all</em> data from a <tt>source</tt> to a <tt>sink</tt>. 
+Pumps <em>all</em> data from a <tt>source</tt> to a <tt>sink</tt>. If
+additional filter
+parameter <tt>filter<sub>1</sub> ... filter<sub>N</sub></tt> are
+provided, they are inserted between the source and the sink.
 </p>
 
 <p class=return>
@@ -174,11 +179,16 @@ of error, the function returns a <b><tt>false</tt></b> value, followed by an err
 <!-- chain ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
 <p class=name id="sink.chain">
-ltn12.sink.<b>chain(</b>filter, sink<b>)</b>
+  ltn12.sink.<b>chain(</b>filter<sub>1</sub>[,
+    filter<sub>2</sub> , ... filter<sub>N</sub>],
+    sink
+    <b>)</b>
 </p>
 
 <p class=description>
-Creates and returns a new sink that passes data through a <tt>filter</tt> before sending it to a given <tt>sink</tt>. 
+Creates and returns a new sink that passes data through
+<tt>filter<sub>1</sub> ... filter<sub>N</sub></tt> before sending it to
+a given <tt>sink</tt>.
 </p>
 
 <!-- error ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
@@ -313,12 +323,14 @@ The function returns the new source.
 <!-- chain ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
 
 <p class=name id="source.chain">
-ltn12.source.<b>chain(</b>source, filter<b>)</b>
+  ltn12.source.<b>chain(</b>source, filter<sub>1</sub>[,
+  filter<sub>2</sub> , ... filter<sub>N</sub>]<b>)</b>
 </p>
 
 <p class=description>
-Creates a new <tt>source</tt> that passes data through a <tt>filter</tt> 
-before returning it. 
+  Creates a new <tt>source</tt> that passes data through
+  <tt>filter<sub>1</sub> ... filter<sub>N</sub></tt>
+  before returning it.
 </p>
 
 <p class=return>

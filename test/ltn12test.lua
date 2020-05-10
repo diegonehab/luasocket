@@ -239,6 +239,14 @@ assert(table.concat(t) == double(double(double(s))), "mismatch")
 print("ok")
 
 --------------------------------
+io.write("testing pump.all (with intermediate filters): ")
+local source = ltn12.source.string(s)
+sink, t = ltn12.sink.table()
+assert(ltn12.pump.all(source, double, double, sink), "returned error")
+assert(table.concat(t) == double(double(s)), "mismatch")
+print("ok")
+
+--------------------------------
 io.write("testing filter.chain (and sink.chain, with split, merge): ")
 source = ltn12.source.string(s)
 filter = split(5)
