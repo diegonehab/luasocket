@@ -34,7 +34,6 @@ local function make_plat(plat)
     },
     mingw32 = {
       "LUASOCKET_DEBUG",
-      "LUASOCKET_INET_PTON",
       "WINVER=0x0501"
     }
   }

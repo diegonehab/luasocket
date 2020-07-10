@@ -22,6 +22,12 @@
 #define LUASOCKET_INET_ATON
 #endif
 
+/* MSVC and MinGW provides "#define InetPtonA inet_pton" when
+ * inet_pton() is available. */
+#if !defined(LUASOCKET_INET_PTON) && defined(_WIN32) && !defined(InetPtonA)
+#define LUASOCKET_INET_PTON
+#endif
+
 #ifndef _WIN32
 #pragma GCC visibility push(hidden)
 #endif
@@ -45,7 +51,6 @@ int inet_aton(const char *cp, struct in_addr *inp);
 #endif
 
 #ifdef LUASOCKET_INET_PTON
-const char *inet_ntop(int af, const void *src, char *dst, socklen_t cnt);
 int inet_pton(int af, const char *src, void *dst);
 #endif
 
