@@ -1,0 +1,121 @@
+name: Windows
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  visual-studio:
+    name: Visual Studio ${{ matrix.vs-version }}
+    strategy:
+      fail-fast: false
+      matrix:
+        vs-version:
+          - 2019
+          - 2017
+        include:
+          - cmake-architecture: x64
+            cmake-generator: Visual Studio 16 2019
+            runs-on: windows-2019
+            vs-version: 2019
+          - cmake-generator: Visual Studio 15 2017 Win64
+            runs-on: windows-2016
+            vs-version: 2017
+    runs-on: ${{ matrix.runs-on }}
+    steps:
+      - name: Disable crash dialog
+        run: |
+          reg add "HKCU\SOFTWARE\Microsoft\Windows\Windows Error Reporting" `
+            /v DontShowUI `
+            /t REG_DWORD `
+            /d 1 `
+            /f
+      - uses: actions/checkout@v2
+      - name: Set environment variables
+        run: |
+          Write-Output "::set-env name=CMAKE_BUILD_PARALLEL_LEVEL::${Env:NUMBER_OF_PROCESSORS}"
+
+          $VC_PREFIX = "C:\Program Files (x86)\Microsoft Visual Studio\${{ matrix.vs-version }}\Enterprise\VC"
+          Write-Output "::set-env name=VC_PREFIX::${VC_PREFIX}"
+
+          $INSTALL_FOLDER = "${Env:GITHUB_WORKSPACE}\install"
+          Write-Output "::set-env name=INSTALL_FOLDER::${INSTALL_FOLDER}"
+
+          $LUA = "${INSTALL_FOLDER}\bin\lua.exe"
+          Write-Output "::set-env name=LUA::${LUA}"
+
+          $LUASOCKET_ROCKSPEC = $(Get-ChildItem rockspec -Exclude "*scm*").FullName
+          Write-Output "::set-env name=LUASOCKET_ROCKSPEC::${LUASOCKET_ROCKSPEC}"
+      - name: Install Lua
+        shell: cmd
+        run: |
+          call "%VC_PREFIX%\Auxiliary\Build\vcvarsall.bat" x64
+          mkdir lua-build
+          set CMAKE_ARGS=-S ci\lua
+          set CMAKE_ARGS=%CMAKE_ARGS% -B lua-build
+          if not "${{ matrix.cmake-architecture }}" == "" (
+            set CMAKE_ARGS=%CMAKE_ARGS% -A ${{ matrix.cmake-architecture }}
+          )
+          set CMAKE_ARGS=%CMAKE_ARGS% -G "${{ matrix.cmake-generator }}"
+          set CMAKE_ARGS=%CMAKE_ARGS% "-DCMAKE_INSTALL_PREFIX=%INSTALL_FOLDER%"
+          cmake %CMAKE_ARGS%
+          cmake --build lua-build --config RelWithDebInfo
+          cmake --build lua-build --config RelWithDebInfo --target Install
+      - name: Install LuaRocks
+        run: |
+          $LUAROCKS_VERSION = "3.3.1"
+          $LUAROCKS_ARCHIVE_BASE = "luarocks-${LUAROCKS_VERSION}-windows-64"
+          Invoke-WebRequest `
+            -Uri "http://luarocks.github.io/luarocks/releases/${LUAROCKS_ARCHIVE_BASE}.zip" `
+            -OutFile "${LUAROCKS_ARCHIVE_BASE}.zip"
+          Expand-Archive `
+            -DestinationPath . `
+            "${LUAROCKS_ARCHIVE_BASE}.zip"
+
+          $LUAROCKS = "${Env:GITHUB_WORKSPACE}\${LUAROCKS_ARCHIVE_BASE}\luarocks.exe"
+          Write-Output "::set-env name=LUAROCKS::${LUAROCKS}"
+      - name: Prepare LuaRocks
+        shell: cmd
+        run: |
+          call "%VC_PREFIX%\Auxiliary\Build\vcvarsall.bat" x64
+          %LUAROCKS% --lua-dir %INSTALL_FOLDER% path > luarocks.path.bat
+      - name: Install LuaSocket
+        shell: cmd
+        run: |
+          call "%VC_PREFIX%\Auxiliary\Build\vcvarsall.bat" x64
+          %LUAROCKS% --lua-dir %INSTALL_FOLDER% make %LUASOCKET_ROCKSPEC%
+      - name: Test LuaSocket
+        shell: cmd
+        run: |
+          call "%VC_PREFIX%\Auxiliary\Build\vcvarsall.bat" x64
+          call luarocks.path.bat
+          cd test
+          %LUA% hello.lua
+
+  mingw:
+    name: MinGW
+    runs-on: windows-2019
+    steps:
+      - name: Disable crash dialog
+        run: |
+          reg add "HKCU\SOFTWARE\Microsoft\Windows\Windows Error Reporting" `
+            /v DontShowUI `
+            /t REG_DWORD `
+            /d 1 `
+            /f
+      - uses: actions/checkout@v2
+      - uses: msys2/setup-msys2@v2
+        with:
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-lua51-luarocks
+      - name: Install LuaSocket
+        shell: msys2 {0}
+        run: |
+          rm rockspec/*-scm-*.rockspec || :
+          luarocks make rockspec/*.rockspec
+      - name: Test LuaSocket
+        shell: msys2 {0}
+        run: |
+          cd test
+          lua5.1.exe hello.lua
