@@ -286,6 +286,13 @@ local function adjustrequest(reqt)
     nreqt.uri = reqt.uri or adjusturi(nreqt)
     -- adjust headers in request
     nreqt.headers = adjustheaders(nreqt)
+    if nreqt.source
+        and not nreqt.headers["content-length"]
+        and not nreqt.headers["transfer-encoding"]
+    then
+        nreqt.headers["transfer-encoding"] = "chunked"
+    end
+
     -- ajust host and port if there is a proxy
     nreqt.host, nreqt.port = adjustproxy(nreqt)
     return nreqt
