@@ -2,13 +2,15 @@ local socket = require("socket")
 socket.url = require("socket.url")
 dofile("testsupport.lua")
 
+local function fail() os.exit(1) end
+
 local check_build_url = function(parsed)
     local built = socket.url.build(parsed)
     if built ~= parsed.url then
         print("built is different from expected")
         print(built)
-        print(expected)
-        os.exit()
+        print(parsed.url)
+        fail()
     end
 end
 
@@ -17,7 +19,7 @@ local check_protect = function(parsed, path, unsafe)
     if built ~= path then
         print(built, path)
         print("path composition failed.")
-        os.exit()
+        fail()
     end
 end
 
@@ -28,7 +30,7 @@ local check_invert = function(url)
     if rebuilt ~= url then
         print(url, rebuilt)
         print("original and rebuilt are different")
-        os.exit()
+        fail()
     end
 end
 
@@ -37,24 +39,24 @@ local check_parse_path = function(path, expect)
     for i = 1, math.max(#parsed, #expect) do
         if parsed[i] ~= expect[i] then
             print(path)
-            os.exit()
+            fail()
         end
     end
     if expect.is_directory ~= parsed.is_directory then
         print(path)
         print("is_directory mismatch")
-        os.exit()
+        fail()
     end
     if expect.is_absolute ~= parsed.is_absolute then
         print(path)
         print("is_absolute mismatch")
-        os.exit()
+        fail()
     end
     local built = socket.url.build_path(expect)
     if built ~= path then
         print(built, path)
         print("path composition failed.")
-        os.exit()
+        fail()
     end
 end
 
@@ -63,7 +65,7 @@ local check_absolute_url = function(base, relative, absolute)
     if res ~= absolute then
         io.write("absolute: In test for base='", base, "', rel='", relative, "' expected '",
             absolute, "' but got '", res, "'\n")
-        os.exit()
+        fail()
     end
 end
 
@@ -76,7 +78,7 @@ local check_parse_url = function(gaba)
             io.write("parse: In test for '", url, "' expected ", i, " = '",
                    v, "' but got '", tostring(parsed[i]), "'\n")
             for i,v in pairs(parsed) do print(i,v) end
-            os.exit()
+            fail()
         end
     end
     for i, v in pairs(parsed) do
@@ -84,7 +86,7 @@ local check_parse_url = function(gaba)
             io.write("parse: In test for '", url, "' expected ", i, " = '",
                    tostring(gaba[i]), "' but got '", v, "'\n")
             for i,v in pairs(parsed) do print(i,v) end
-            os.exit()
+            fail()
         end
     end
 end
@@ -626,7 +628,7 @@ local check_classify_host = function(raw, expect_hosttype, expect_host)
         io.write("classify_host: for '", raw, "' expected ", expect_hosttype,
             " '", expect_host, "' but got ", tostring(hosttype), " '",
             tostring(host), "'\n")
-        os.exit()
+        fail()
     end
 end
 
@@ -651,7 +653,7 @@ do
         {scheme = "http", ipv4 = "1.2.3.4", hostname = "example.com", path = "/path"})
     if ok then
         print("build: expected error for ambiguous host, got none")
-        os.exit()
+        fail()
     end
 end
 
