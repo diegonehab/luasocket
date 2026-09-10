@@ -384,8 +384,16 @@ end
     local code, status = h:receivestatusline()
     -- if it is an HTTP/0.9 server, simply get the body and we are done
     if not code then
-        h:receive09body(status, nreqt.sink, nreqt.step)
-        return 1, 200
+        if nreqt.sink then
+            h:receive09body(status, nreqt.sink, nreqt.step)
+            return 1, 200
+        else
+            return socket.protect(function(sink, step)
+                if sink then
+                    return h:receive09body(status, sink, step or nreqt.step)
+                end
+            end), 200
+        end
     elseif code == 408 then
         return 1, code
     end
@@ -403,11 +411,23 @@ end
         return tredirect(reqt, headers.location)
     end
     -- here we are finally done
+    local receivebody
     if shouldreceivebody(nreqt, code) then
-        h:receivebody(headers, nreqt.sink, nreqt.step)
+        if nreqt.sink then
+            h:receivebody(headers, nreqt.sink, nreqt.step)
+        else
+            receivebody = socket.protect(function(sink, step)
+                local res, err
+                if sink then
+                    res, err = h:receivebody(headers, sink, step or nreqt.step)
+                end
+                h:close()
+                return res, err
+            end)
+        end
     end
-    h:close()
-    return 1, code, headers, status
+    if not receivebody then h:close() end
+    return receivebody or 1, code, headers, status
 end
 
 -- turns an url and a body into a generic request
