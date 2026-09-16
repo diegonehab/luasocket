@@ -259,7 +259,7 @@ local function adjustheaders(reqt)
     if reqt.user and reqt.password then
         lower["authorization"] =
             "Basic " ..  (mime.b64(reqt.user .. ":" ..
-		url.unescape(reqt.password)))
+		reqt.password))
     end
     -- if we have proxy authentication information, pass it along
     local proxy = reqt.proxy or _M.PROXY

@@ -211,7 +211,7 @@ function _M.parse(url, default)
     local userinfo = parsed.userinfo
     if not userinfo then return parsed end
     userinfo = string.gsub(userinfo, ":([^:]*)$",
-        function(p) parsed.password = p; return "" end)
+        function(p) parsed.password = _M.unescape(p); return "" end)
     parsed.user = userinfo
     return parsed
 end
