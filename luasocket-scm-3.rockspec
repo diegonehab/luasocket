@@ -115,6 +115,24 @@ local function make_plat(plat)
     modules["socket.core"].sources[#modules["socket.core"].sources+1] = "src/wsocket.c"
     modules["socket.core"].libraries = { "ws2_32" }
     modules["socket.core"].libdirs = {}
+    modules["socket.unix"] = {
+      sources = {
+        "src/buffer.c"
+        , "src/compat.c"
+        , "src/auxiliar.c"
+        , "src/options.c"
+        , "src/timeout.c"
+        , "src/io.c"
+        , "src/inet.c"
+        , "src/wsocket.c"
+        , "src/unix.c"
+        , "src/unixdgram.c"
+        , "src/unixstream.c" },
+      defines = defines[plat],
+      libraries = { "ws2_32" },
+      libdirs = {},
+      incdir = "/src"
+    }
   end
   return { modules = modules }
 end

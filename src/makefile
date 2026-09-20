@@ -347,7 +347,8 @@ UNIX_OBJS=\
 	options.$(O) \
 	timeout.$(O) \
 	io.$(O) \
-	usocket.$(O) \
+	inet.$(O) \
+	$(SOCKET) \
 	unixstream.$(O) \
 	unixdgram.$(O) \
 	compat.$(O) \
@@ -395,19 +396,19 @@ macosx:
 	$(MAKE) all-unix PLAT=macosx
 
 win32:
-	$(MAKE) all PLAT=win32
+	$(MAKE) all-windows PLAT=win32
 
 win64:
-	$(MAKE) all PLAT=win64
+	$(MAKE) all-windows PLAT=win64
 
 linux:
 	$(MAKE) all-unix PLAT=linux
 
 mingw:
-	$(MAKE) all PLAT=mingw
+	$(MAKE) all-windows PLAT=mingw
 
 ucrt64:
-	$(MAKE) all PLAT=ucrt64
+	$(MAKE) all-windows PLAT=ucrt64
 
 solaris:
 	$(MAKE) all-unix PLAT=solaris
@@ -427,6 +428,8 @@ $(MIME_SO): $(MIME_OBJS)
 	$(LD) $(MIME_OBJS) $(LDFLAGS)$@
 
 all-unix: all $(UNIX_SO) $(SERIAL_SO)
+
+all-windows: all $(UNIX_SO)
 
 $(UNIX_SO): $(UNIX_OBJS)
 	$(LD) $(UNIX_OBJS) $(LDFLAGS)$@

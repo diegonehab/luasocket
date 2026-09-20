@@ -47,6 +47,14 @@ static int compat_socket_unix_call(lua_State *L)
 LUASOCKET_API int luaopen_socket_unix(lua_State *L)
 {
     int i;
+#if HAVE_WINDOWS_AFUNIX
+    /* Winsock has to be started before a socket can be created, and this module can
+     * be the first one required. Starting it again is counted, not refused. */
+    if (!socket_open()) {
+        lua_pushstring(L, "unable to initialize library");
+        lua_error(L);
+    }
+#endif
     lua_newtable(L);
     int socket_unix_table = lua_gettop(L);
 

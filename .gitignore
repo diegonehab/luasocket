@@ -12,4 +12,5 @@ Release
 *.swp
 *.suo
 x64
+*.sock
 

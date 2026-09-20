@@ -45,6 +45,7 @@ jobs:
           lua excepttest.lua
           lua test_bind.lua
           lua test_getaddrinfo.lua
+          lua test_unix.lua
           lua ltn12test.lua
           lua mimetest.lua
           lua urltest.lua
@@ -54,3 +55,41 @@ jobs:
           lua test_udp_receive_zero.lua
           [ "$RUNNER_OS" = "Windows" ] || lua test_unixdgram_receive_zero.lua
           kill %1
+
+  solution:
+    name: Build luasocket.sln
+    runs-on: windows-2022
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Setup ’msvc’
+        # Also puts MSBuild on PATH, by way of vcvarsall
+        uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1
+      - name: Setup ‘lua’
+        uses: luarocks/gh-actions-lua@85e2287697275df96334743ac654241a8fd34ab3 # v13
+        with:
+          luaVersion: "5.4"
+          buildCache: false
+      - name: Build the solution
+        shell: bash
+        # The projects name the v141 toolset, which the runner does not carry, and
+        # Lua.props points at a path on the author's machine, so both are given here
+        # rather than changed in tree: a property on the command line wins over one
+        # the project sets, and a developer opening the solution keeps their own.
+        run: |
+          root=$(pwd -W)
+          MSBuild.exe luasocket.sln \
+            -p:Configuration=Release \
+            -p:Platform=x64 \
+            -p:PlatformToolset=v143 \
+            -p:LUAINC="$root/.lua/include" \
+            -p:LUALIB="$root/.lua/lib" \
+            -p:LUALIBNAME=lua54.lib
+      - name: Check the modules were built
+        shell: bash
+        run: |
+          ls -lR x64/Release
+          for dll in socket/core socket/unix mime/core; do
+            test -f "x64/Release/$dll.dll" \
+              || { echo "x64/Release/$dll.dll was not built"; exit 1; }
+          done

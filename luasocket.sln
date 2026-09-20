@@ -4,6 +4,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "socket", "socket.vcxproj", 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mime", "mime.vcxproj", "{128E8BD0-174A-48F0-8771-92B1E8D18713}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "unix", "unix.vcxproj", "{1390FB7F-6D39-4F0A-BBC0-0EAC022D827A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -28,6 +30,14 @@ Global
 		{128E8BD0-174A-48F0-8771-92B1E8D18713}.Release|Win32.Build.0 = Release|Win32
 		{128E8BD0-174A-48F0-8771-92B1E8D18713}.Release|x64.ActiveCfg = Release|x64
 		{128E8BD0-174A-48F0-8771-92B1E8D18713}.Release|x64.Build.0 = Release|x64
+		{1390FB7F-6D39-4F0A-BBC0-0EAC022D827A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1390FB7F-6D39-4F0A-BBC0-0EAC022D827A}.Debug|Win32.Build.0 = Debug|Win32
+		{1390FB7F-6D39-4F0A-BBC0-0EAC022D827A}.Debug|x64.ActiveCfg = Debug|x64
+		{1390FB7F-6D39-4F0A-BBC0-0EAC022D827A}.Debug|x64.Build.0 = Debug|x64
+		{1390FB7F-6D39-4F0A-BBC0-0EAC022D827A}.Release|Win32.ActiveCfg = Release|Win32
+		{1390FB7F-6D39-4F0A-BBC0-0EAC022D827A}.Release|Win32.Build.0 = Release|Win32
+		{1390FB7F-6D39-4F0A-BBC0-0EAC022D827A}.Release|x64.ActiveCfg = Release|x64
+		{1390FB7F-6D39-4F0A-BBC0-0EAC022D827A}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
