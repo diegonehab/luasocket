@@ -219,7 +219,7 @@ end
 local function adjusturi(reqt)
     local u = reqt
     -- if there is a proxy, we need the full url. otherwise, just a part.
-    if not reqt.proxy and not _M.PROXY then
+    if reqt.proxy_tunnel or (not reqt.proxy and not _M.PROXY) then
         u = {
            path = socket.try(reqt.path, "invalid path 'nil'"),
            params = reqt.params,
@@ -230,12 +230,10 @@ local function adjusturi(reqt)
     return url.build(u)
 end
 
-local function adjustproxy(reqt)
-    local proxy = reqt.proxy or _M.PROXY
+local function adjustproxy(reqt, proxy, tunnel)
     if proxy then
-        proxy = url.parse(proxy)
-        proxy.port = proxy.port or 3128
-        proxy.create = SCHEMES[proxy.scheme].create(reqt)
+        proxy.create = tunnel and SCHEMES.https.create(reqt)
+            or SCHEMES[proxy.scheme].create(reqt)
         return proxy.host, proxy.port, proxy.create
     else
         return reqt.host, reqt.port, reqt.create
@@ -291,16 +289,37 @@ local function adjustrequest(reqt)
     -- default to scheme particulars
     local schemedefs, host, port, method
         = SCHEMES[nreqt.scheme], nreqt.host, nreqt.port, nreqt.method
-    if not nreqt.create then nreqt.create = schemedefs.create(nreqt) end
     if not (port and port ~= '') then nreqt.port = schemedefs.port end
     if not (method and method ~= '') then nreqt.method = 'GET' end
     if not (host and host ~= "") then
         socket.try(nil, "invalid host '" .. base.tostring(nreqt.host) .. "'")
     end
+
+    local proxy = reqt.proxy or _M.PROXY
+    if proxy then
+        proxy = url.parse(proxy)
+        proxy.port = proxy.port or 3128
+    end
+    local tunnel = not reqt.create
+        and nreqt.scheme == "https"
+        and proxy and proxy.scheme == "http"
+    if tunnel then
+        nreqt.proxy_tunnel = {
+            host = nreqt.host,
+            port = nreqt.port,
+            user = proxy.user and url.unescape(proxy.user),
+            password = proxy.password and url.unescape(proxy.password)
+        }
+    elseif not nreqt.create then
+        nreqt.create = schemedefs.create(nreqt)
+    end
+
     -- compute uri if user hasn't overridden
-    nreqt.uri = reqt.uri or adjusturi(nreqt)
+    if tunnel then nreqt.uri = adjusturi(nreqt)
+    else nreqt.uri = reqt.uri or adjusturi(nreqt) end
     -- adjust headers in request
     nreqt.headers = adjustheaders(nreqt)
+    if tunnel then nreqt.headers["proxy-authorization"] = nil end
     if nreqt.source
         and not nreqt.headers["content-length"]
         and not nreqt.headers["transfer-encoding"]
@@ -308,9 +327,9 @@ local function adjustrequest(reqt)
         nreqt.headers["transfer-encoding"] = "chunked"
     end
 
-    -- ajust host and port if there is a proxy
+    -- adjust host and port if there is a proxy
     local proxy_create
-    nreqt.host, nreqt.port, proxy_create = adjustproxy(nreqt)
+    nreqt.host, nreqt.port, proxy_create = adjustproxy(nreqt, proxy, tunnel)
     if not reqt.create then nreqt.create = proxy_create end
 
     return nreqt
