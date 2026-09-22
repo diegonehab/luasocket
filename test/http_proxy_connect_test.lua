@@ -191,4 +191,20 @@ assert_equal(state.opens[1].host, "proxy.example", "HTTP proxy destination host"
 assert_equal(state.opens[1].uri, "http://origin.example:80/via-proxy",
     "HTTP proxy absolute-form URI")
 
+-- Direct HTTPS does not create a proxy tunnel descriptor.
+reset({ { code = 200, headers = {} } })
+request { url = "https://origin.example/direct" }
+assert_equal(https_state.calls, 1, "direct HTTPS creator selection")
+assert_equal(https_state.params.proxy_tunnel, nil,
+    "direct HTTPS unexpectedly created a proxy tunnel")
+
+-- HTTPS through an HTTPS proxy is not classified as an HTTP CONNECT tunnel.
+reset({ { code = 200, headers = {} } })
+request {
+    url = "https://origin.example/via-https-proxy",
+    proxy = "https://proxy.example:3128"
+}
+assert_equal(https_state.params.proxy_tunnel, nil,
+    "HTTPS proxy unexpectedly created an HTTP CONNECT tunnel")
+
 print("http proxy CONNECT classification tests: ok")
