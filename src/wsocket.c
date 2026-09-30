@@ -127,7 +127,19 @@ int socket_connect(p_socket ps, SA *addr, socklen_t len, p_timeout tm) {
     if (connect(*ps, addr, len) == 0) return IO_DONE;
     /* make sure the system is trying to connect */
     err = WSAGetLastError();
+
+    if (err == WSAEISCONN) return IO_DONE; // already connected?
+
+    // hotfix for nonblocking, slow TCP connections not returning instantly
+    // https://msdn.microsoft.com/en-us/library/windows/desktop/ms737625(v=vs.85).aspx
+    // "Note  In order to preserve backward compatibility, this error is reported as WSAEINVAL to Windows Sockets 1.1 applications that link to either Winsock.dll or Wsock32.dll."
+    // The only other valid reason to get WSAINVAL is that: The parameter s is a listening socket. So we hope that doesn't happen here.
+    if (err == WSAEINVAL) {
+        return WSAEALREADY;
+    }
+
     if (err != WSAEWOULDBLOCK && err != WSAEINPROGRESS) return err;
+
     /* zero timeout case optimization */
     if (timeout_iszero(tm)) return IO_TIMEOUT;
     /* we wait until something happens */
