@@ -385,8 +385,10 @@ end
     -- if it is an HTTP/0.9 server, simply get the body and we are done
     if not code then
         h:receive09body(status, nreqt.sink, nreqt.step)
+        h:close()
         return 1, 200
     elseif code == 408 then
+        h:close()
         return 1, code
     end
     local headers
