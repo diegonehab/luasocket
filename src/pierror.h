@@ -12,7 +12,7 @@
 #define PIE_CONNREFUSED    "connection refused"
 #define PIE_CONNABORTED    "closed"
 #define PIE_CONNRESET      "closed"
-#define PIE_TIMEDOUT       "timeout"
+#define PIE_TIMEDOUT       "connection timeout"
 #define PIE_AGAIN          "temporary failure in name resolution"
 #define PIE_BADFLAGS       "invalid value for ai_flags"
 #define PIE_BADHINTS       "invalid value for hints"
