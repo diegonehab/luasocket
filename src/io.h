@@ -14,13 +14,14 @@
 \*=========================================================================*/
 #include "luasocket.h"
 #include "timeout.h"
+#include "common.h"
 
 /* IO error codes */
 enum {
     IO_DONE = 0,        /* operation completed successfully */
     IO_TIMEOUT = -1,    /* operation timed out */
     IO_CLOSED = -2,     /* the connection has been closed */
-	IO_UNKNOWN = -3
+    IO_UNKNOWN = -3
 };
 
 /* interface to error message function */
@@ -60,8 +61,8 @@ typedef t_io *p_io;
 #pragma GCC visibility push(hidden)
 #endif
 
-void io_init(p_io io, p_send send, p_recv recv, p_error error, void *ctx);
-const char *io_strerror(int err);
+LUASOCKET_API void io_init(p_io io, p_send send, p_recv recv, p_error error, void *ctx);
+LUASOCKET_API const char *io_strerror(int err);
 
 #ifndef _WIN32
 #pragma GCC visibility pop

@@ -10,6 +10,7 @@
 * creates a interface compatible with the io.h module.
 \*=========================================================================*/
 #include "io.h"
+#include "common.h"
 
 /*=========================================================================*\
 * Platform specific compatibilization
@@ -42,31 +43,31 @@ typedef struct sockaddr SA;
 #pragma GCC visibility push(hidden)
 #endif
 
-int socket_waitfd(p_socket ps, int sw, p_timeout tm);
-int socket_open(void);
-int socket_close(void);
-void socket_destroy(p_socket ps);
-int socket_select(t_socket n, fd_set *rfds, fd_set *wfds, fd_set *efds, p_timeout tm);
-int socket_create(p_socket ps, int domain, int type, int protocol);
-int socket_bind(p_socket ps, SA *addr, socklen_t addr_len); 
-int socket_listen(p_socket ps, int backlog);
-void socket_shutdown(p_socket ps, int how); 
-int socket_connect(p_socket ps, SA *addr, socklen_t addr_len, p_timeout tm); 
-int socket_accept(p_socket ps, p_socket pa, SA *addr, socklen_t *addr_len, p_timeout tm);
-int socket_send(p_socket ps, const char *data, size_t count, size_t *sent, p_timeout tm);
-int socket_sendto(p_socket ps, const char *data, size_t count, size_t *sent, SA *addr, socklen_t addr_len, p_timeout tm);
-int socket_recv(p_socket ps, char *data, size_t count, size_t *got, p_timeout tm);
-int socket_recvfrom(p_socket ps, char *data, size_t count, size_t *got, SA *addr, socklen_t *addr_len, p_timeout tm);
-int socket_write(p_socket ps, const char *data, size_t count, size_t *sent, p_timeout tm);
-int socket_read(p_socket ps, char *data, size_t count, size_t *got, p_timeout tm);
-void socket_setblocking(p_socket ps);
-void socket_setnonblocking(p_socket ps);
-int socket_gethostbyaddr(const char *addr, socklen_t len, struct hostent **hp);
-int socket_gethostbyname(const char *addr, struct hostent **hp);
-const char *socket_hoststrerror(int err);
-const char *socket_strerror(int err);
-const char *socket_ioerror(p_socket ps, int err);
-const char *socket_gaistrerror(int err);
+LUASOCKET_API int socket_waitfd(p_socket ps, int sw, p_timeout tm);
+LUASOCKET_API int socket_open(void);
+LUASOCKET_API int socket_close(void);
+LUASOCKET_API void socket_destroy(p_socket ps);
+LUASOCKET_API int socket_select(t_socket n, fd_set *rfds, fd_set *wfds, fd_set *efds, p_timeout tm);
+LUASOCKET_API int socket_create(p_socket ps, int domain, int type, int protocol);
+LUASOCKET_API int socket_bind(p_socket ps, SA *addr, socklen_t addr_len);
+LUASOCKET_API int socket_listen(p_socket ps, int backlog);
+LUASOCKET_API void socket_shutdown(p_socket ps, int how);
+LUASOCKET_API int socket_connect(p_socket ps, SA *addr, socklen_t addr_len, p_timeout tm);
+LUASOCKET_API int socket_accept(p_socket ps, p_socket pa, SA *addr, socklen_t *addr_len, p_timeout tm);
+LUASOCKET_API int socket_send(p_socket ps, const char *data, size_t count, size_t *sent, p_timeout tm);
+LUASOCKET_API int socket_sendto(p_socket ps, const char *data, size_t count, size_t *sent, SA *addr, socklen_t addr_len, p_timeout tm);
+LUASOCKET_API int socket_recv(p_socket ps, char *data, size_t count, size_t *got, p_timeout tm);
+LUASOCKET_API int socket_recvfrom(p_socket ps, char *data, size_t count, size_t *got, SA *addr, socklen_t *addr_len, p_timeout tm);
+LUASOCKET_API int socket_write(p_socket ps, const char *data, size_t count, size_t *sent, p_timeout tm);
+LUASOCKET_API int socket_read(p_socket ps, char *data, size_t count, size_t *got, p_timeout tm);
+LUASOCKET_API void socket_setblocking(p_socket ps);
+LUASOCKET_API void socket_setnonblocking(p_socket ps);
+LUASOCKET_API int socket_gethostbyaddr(const char *addr, socklen_t len, struct hostent **hp);
+LUASOCKET_API int socket_gethostbyname(const char *addr, struct hostent **hp);
+LUASOCKET_API const char *socket_hoststrerror(int err);
+LUASOCKET_API const char *socket_strerror(int err);
+LUASOCKET_API const char *socket_ioerror(p_socket ps, int err);
+LUASOCKET_API const char *socket_gaistrerror(int err);
 
 #ifndef _WIN32
 #pragma GCC visibility pop

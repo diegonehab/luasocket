@@ -42,10 +42,6 @@ int socket_close(void) {
 /*-------------------------------------------------------------------------*\
 * Wait for readable/writable/connected socket with timeout
 \*-------------------------------------------------------------------------*/
-#define WAITFD_R        1
-#define WAITFD_W        2
-#define WAITFD_E        4
-#define WAITFD_C        (WAITFD_E|WAITFD_W)
 
 int socket_waitfd(p_socket ps, int sw, p_timeout tm) {
     int ret;

@@ -20,9 +20,6 @@
 #ifndef SOCKET_SELECT
 #include <sys/poll.h>
 
-#define WAITFD_R        POLLIN
-#define WAITFD_W        POLLOUT
-#define WAITFD_C        (POLLIN|POLLOUT)
 int socket_waitfd(p_socket ps, int sw, p_timeout tm) {
     int ret;
     struct pollfd pfd;
@@ -41,9 +38,6 @@ int socket_waitfd(p_socket ps, int sw, p_timeout tm) {
 }
 #else
 
-#define WAITFD_R        1
-#define WAITFD_W        2
-#define WAITFD_C        (WAITFD_R|WAITFD_W)
 
 int socket_waitfd(p_socket ps, int sw, p_timeout tm) {
     int ret;
