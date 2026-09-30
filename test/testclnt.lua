@@ -200,6 +200,32 @@ remote "data:send(str)"
 end
 
 ------------------------------------------------------------------------
+function test_linebackforth(text, lineending)
+    local sent, back, err
+remote "str = data:receive()"
+    sent, err = data:send(text .. lineending)
+    if err then fail(err) end
+remote "data:send(str ..'\\r\\n')"
+    back, err = data:receive()
+    if err then fail(err) end
+    if text == back then pass("linesbf match")
+    else fail("linesbf don't match") end
+end
+
+------------------------------------------------------------------------
+function test_linebackforthL(text)
+    local sent, back, err
+remote "str = data:receive('L')"
+    sent, err = data:send(text)
+    if err then fail(err) end
+remote "data:send(str)"
+    back, err = data:receive('L')
+    if err then fail(err) end
+    if text == back then pass("linesbf match")
+    else fail("linesbf don't match") end
+end
+
+------------------------------------------------------------------------
 function test_totaltimeoutreceive(len, tm, sl)
     reconnect()
     local str, err, partial
@@ -294,7 +320,15 @@ function empty_connect()
         pass("ok")
         data = socket.connect(host, port)
     else
-        pass("gethostbyname returns localhost on empty string...")
+        local peer = data:getpeername()
+        if peer == '127.0.0.1' or peer == '::1' then
+            pass("gethostbyname returns localhost on empty string...")
+        else
+            -- it bound to the address of the computer on the local network
+            -- which won't necessarily be able to communicate depending on firewall
+            pass("gethostbyname returns local computer on empty string...")
+            data = socket.connect(host, port)
+        end
     end
 end
 
@@ -950,6 +984,20 @@ test_raw(4091)
 test_raw(200)
 test_raw(17)
 test_raw(1)
+
+test("line endings")
+test_linebackforth("test data", "\n")
+test_linebackforth("test data", "\r\n")
+test_linebackforth("test data\r", "\r\n") -- a \r at the end can be kept
+test_linebackforth("\rtest\rthis", "\n")
+test_linebackforth("\rtest\rthis", "\r\n")
+
+test("line endings with recv(L)")
+test_linebackforthL("test data\n")
+test_linebackforthL("test data\r\n")
+test_linebackforthL("test data\r\r\n")
+test_linebackforthL("\rtest\rthis\n")
+test_linebackforthL("\rtest\rthis\r\n")
 
 test("non-blocking transfer")
 test_nonblocking(1)

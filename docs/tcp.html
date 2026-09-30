@@ -366,7 +366,8 @@ client:<b>receive(</b>[pattern [, prefix [, maxsize]]]<b>)</b>
 
 <p class="description">
 Reads data from a client object, according to the specified <em>read
-pattern</em>.  Patterns follow the Lua file I/O format, and the difference in performance between all patterns is negligible.
+pattern</em>.  Patterns follow the Lua file I/O format, and the difference in
+performance between all patterns is negligible.
 </p>
 
 <p class="parameters">
@@ -374,13 +375,17 @@ pattern</em>.  Patterns follow the Lua file I/O format, and the difference in pe
 </p>
 
 <ul>
-<li> '<tt>*a</tt>':  reads from  the  socket  until the  connection  is
+<li> '<tt>a</tt>':  reads from  the  socket  until the  connection  is
 closed. No end-of-line translation is performed;</li>
-<li> '<tt>*l</tt>':  reads a line of  text from the socket.  The line is
+<li> '<tt>l</tt>':  reads a line of  text from the socket.  The line is
 terminated by a  LF character (ASCII&nbsp;10), optionally  preceded by a
 CR character (ASCII&nbsp;13). The CR and LF characters are not included in
-the returned line. In fact, <em>all</em> CR characters are
-ignored by the pattern. This is the default pattern;</li>
+the returned line. CR characters not at the end of the line are still included.
+This is the default pattern;</li>
+<li> '<tt>L</tt>':  reads a line of  text from the socket.  The line is
+terminated by a  LF character (ASCII&nbsp;10), optionally  preceded by a
+CR character (ASCII&nbsp;13). The CR and LF characters are kept in the returned
+line.</li>
 <li> <tt>number</tt>:  causes the  method to read  a specified <tt>number</tt>
 of bytes from the socket.</li>
 </ul>
