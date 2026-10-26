@@ -217,15 +217,18 @@ end
 -- High level HTTP API
 -----------------------------------------------------------------------------
 local function adjusturi(reqt)
-    local u = reqt
+    local u = {
+       path = reqt.path,
+       params = reqt.params,
+       query = reqt.query,
+       fragment = reqt.fragment
+    }
     -- if there is a proxy, we need the full url. otherwise, just a part.
     if not reqt.proxy and not _M.PROXY then
-        u = {
-           path = socket.try(reqt.path, "invalid path 'nil'"),
-           params = reqt.params,
-           query = reqt.query,
-           fragment = reqt.fragment
-        }
+        u.path = socket.try(reqt.path, "invalid path 'nil'")
+    else
+        -- no userinfo: credentials are sent in the Authorization header
+        u.scheme, u.host, u.port = reqt.scheme, reqt.host, reqt.port
     end
     return url.build(u)
 end
